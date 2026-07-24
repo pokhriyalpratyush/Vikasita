@@ -29,7 +29,9 @@ import cottonLinenSareeImg from './assets/cotton_linen_saree.png';
 import chanderiSareeImg from './assets/chanderi_saree.png';
 import sheenSilkSareeImg from './assets/sheen_silk_saree.png';
 
-const API_BASE = `http://${window.location.hostname}:5000/api`;
+const API_BASE = import.meta.env.MODE === 'production' 
+  ? '/api' 
+  : `http://${window.location.hostname}:5000/api`;
 
 const fabricDisplayNames = {
   organza: 'Organza Silk',
