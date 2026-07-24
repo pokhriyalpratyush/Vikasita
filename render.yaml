@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: bloomthread
+    runtime: node
+    buildCommand: npm run build
+    startCommand: npm run start-backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+        placeholder: "e.g., mongodb+srv://username:password@cluster.mongodb.net/database"
+      - key: EMAIL_USER
+        sync: false
+        placeholder: "Gmail Address (optional)"
+      - key: EMAIL_PASS
+        sync: false
+        placeholder: "Gmail App Password (optional)"
