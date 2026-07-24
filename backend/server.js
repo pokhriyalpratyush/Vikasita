@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const https = require('https');
 require('dotenv').config();
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -1702,110 +1703,123 @@ app.put('/api/orders/:id/status', authenticateToken, async (req, res) => {
   }
 });
 
-// Root landing status check
-app.get('/', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>BloomThread Backend API</title>
-      <style>
-        body {
-          margin: 0;
-          font-family: 'Outfit', 'Inter', system-ui, sans-serif;
-          background-color: #f7f9f6;
-          color: #2b3a2e;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 100vh;
-        }
-        .card {
-          background: rgba(255, 255, 255, 0.85);
-          backdrop-filter: blur(12px);
-          border-radius: 20px;
-          padding: 40px;
-          box-shadow: 0 10px 30px rgba(42, 77, 52, 0.08);
-          border: 1px solid rgba(42, 77, 52, 0.1);
-          max-width: 500px;
-          text-align: center;
-        }
-        h1 {
-          color: #2a4d34;
-          margin-top: 0;
-          font-size: 28px;
-        }
-        p {
-          font-size: 16px;
-          line-height: 1.6;
-          color: #556b5a;
-        }
-        .status-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background-color: #eaf2eb;
-          color: #2a4d34;
-          padding: 8px 16px;
-          border-radius: 30px;
-          font-weight: bold;
-          font-size: 14px;
-          margin-bottom: 20px;
-        }
-        .status-dot {
-          width: 8px;
-          height: 8px;
-          background-color: #2e7d32;
-          border-radius: 50%;
-          animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-          0% { transform: scale(0.9); opacity: 0.6; }
-          50% { transform: scale(1.2); opacity: 1; }
-          100% { transform: scale(0.9); opacity: 0.6; }
-        }
-        .links {
-          margin-top: 24px;
-          display: flex;
-          justify-content: center;
-          gap: 16px;
-        }
-        .link-btn {
-          color: #2a4d34;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 600;
-          padding: 8px 16px;
-          border: 1px solid #2a4d34;
-          border-radius: 8px;
-          transition: all 0.2s ease;
-        }
-        .link-btn:hover {
-          background-color: #2a4d34;
-          color: white;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="card">
-        <div class="status-badge">
-          <div class="status-dot"></div>
-          Backend Online
+// Serve frontend static assets in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+  
+  app.get('*', (req, res, next) => {
+    // Let API calls fall through
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  });
+} else {
+  // Root landing status check (Development mode)
+  app.get('/', (req, res) => {
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BloomThread Backend API</title>
+        <style>
+          body {
+            margin: 0;
+            font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+            background-color: #f7f9f6;
+            color: #2b3a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+          }
+          .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(42, 77, 52, 0.08);
+            border: 1px solid rgba(42, 77, 52, 0.1);
+            max-width: 500px;
+            text-align: center;
+          }
+          h1 {
+            color: #2a4d34;
+            margin-top: 0;
+            font-size: 28px;
+          }
+          p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #556b5a;
+          }
+          .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #eaf2eb;
+            color: #2a4d34;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 20px;
+          }
+          .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #2e7d32;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+          }
+          @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+          }
+          .links {
+            margin-top: 24px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+          }
+          .link-btn {
+            color: #2a4d34;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 1px solid #2a4d34;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+          }
+          .link-btn:hover {
+            background-color: #2a4d34;
+            color: white;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <div class="status-badge">
+            <div class="status-dot"></div>
+            Backend Online
+          </div>
+          <h1>BloomThread API</h1>
+          <p>The premium full-stack botanical e-commerce platform API is active and successfully connected to the database.</p>
+          <p style="font-size: 14px; font-style: italic;">Mode: [${dbMode.toUpperCase()}] DB integration</p>
+          <div class="links">
+            <a href="/api/status" class="link-btn">Check Status</a>
+            <a href="/api/products" class="link-btn">View Products</a>
+          </div>
         </div>
-        <h1>BloomThread API</h1>
-        <p>The premium full-stack botanical e-commerce platform API is active and successfully connected to the database.</p>
-        <p style="font-size: 14px; font-style: italic;">Mode: [${dbMode.toUpperCase()}] DB integration</p>
-        <div class="links">
-          <a href="/api/status" class="link-btn">Check Status</a>
-          <a href="/api/products" class="link-btn">View Products</a>
-        </div>
-      </div>
-    </body>
-    </html>
-  `);
-});
+      </body>
+      </html>
+    `);
+  });
+}
 
 // Status check API
 app.get('/api/status', (req, res) => {
