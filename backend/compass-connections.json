@@ -1,0 +1,24 @@
+{
+  "type": "Compass Connections",
+  "version": {
+    "$numberInt": "1"
+  },
+  "connections": [
+    {
+      "id": "71b2aa7f-7537-4ebd-bffc-8a86a0251c21",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1784609392529"
+        }
+      },
+      "favorite": {
+        "name": "Vikasita"
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {}
+      }
+    }
+  ]
+}
